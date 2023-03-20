@@ -17,8 +17,8 @@
 				- sigma controls shape of filter
 				- k = 3 or 4
 				- Separable: 
-					- $h_x(i) = (1 / (sqrt(2*pi) * sigma)) * e^(-i^2/(2 * sigma^2))$
-					- $h_y(j) = (1 / (sqrt(2*pi) * sigma)) * e^(-j^2/(2 * sigma^2))$
+					- $$h_x(i) = (1 / (sqrt(2*pi) * sigma)) * e^{(\frac {-i^2}{(2 * sigma^2)})}$$
+					- $$h_y(j) = (1 / (sqrt(2*pi) * sigma)) * e^{(\frac {-j^2}{(2 * sigma^2)})}$$
 			- low-pass smoothen or blur image and keep low-frequency signals
 		- high pass or sharpening filter
 			- highlight the high frequency signals and sharpen image
@@ -27,7 +27,7 @@
 			- median filter - replace the center pixel of the sliding window/kernel with the median of the window, non-linear filter
 		 - Impulse response:
 			 - For continuous signal, impulse response is Dirac delta function where $delta(x) = +$inf if x=0 OR 0 otherwise, such that integration of delta from -inf to +inf = 1
-			 - For discrete signal, impulse response is Kornecker delta function delta[i] where $delta[i] =$ 1 if x=0 OR 0 otherwise.
+			 - For discrete signal, impulse response is Kornecker delta function delta[i] where $\delta[i] =$ 1 if x=0 OR 0 otherwise.
 			 - The output g[n] = f[n]  *  h[n] where * is convolution and h is impulse = summation(m=-inf to m=+inf) f[m] * h[n - m]
 			    = summation(m=-inf to m=+inf) f[n - m] * h[m]
 			- Note: convolution is commutative and associative
@@ -115,7 +115,7 @@
 		- Detector response R = det(M) - k * (trace(M))^2. (trace is sum of diagnol elems)
 		- I_x = G_x * I,  I_y = G_y * I    where G can be sobel filter, I is image, I_x and I_y are derivatives of image.
 		- Regular harris detector is rotation invariant as you still get same change in intensity if an image is rotated
-		- We can also use Laplcain Gaussian i.e. Gaussian smoothing followed by Laplacian. Laplacian: sum of second derivatives:![[Pasted image 20230313165650.png]]
+		- We can also use Laplcain of Gaussian i.e. Gaussian smoothing followed by Laplacian. Laplacian: sum of second derivatives:![[Pasted image 20230313165650.png]]
 		- second derivative is more sensitive to noise, which is why we first smooth the image before applying laplacian. Laplacian of gaussian is laplacian func f convoluted with:![[Pasted image 20230313170036.png]]
 		- To factor in scale in LoG: ![[Pasted image 20230313170727.png]]
 		- Difference of Gaussians (DoG) is a good approximation to normalized LoG and provides convenience in calculating response across diff scales.![[Pasted image 20230313170932.png]]
@@ -265,7 +265,43 @@
 			- Convolutional Neural Networks (CNN)
 				- similar to MLP. CNN assumes that inputs are images and encode certain properties (ex: local connectivity, weight sharing) into the architecture. This makes computation more efficient and substantially reduces the number of params.
 				- each neuron only sees small local region in the layer before it. the region it sees is called receptive field. local connectivity reduces params
-				- 
+				- look at each local region, process information and combine to form a global understanding.
+				- Input: X x Y x C (where C is channel. C=3 for RGB or 1 for grayscale)
+				- no. parameters = XxYxC for connection weights and 1 for bias.
+				- ![[Pasted image 20230318191259.png]]
+				- ![[Pasted image 20230318192334.png]]
+				- ![[Pasted image 20230318192345.png]]
+				- ![[Pasted image 20230318192425.png]]
+				- Operations during convolution
+					- Padding - affects output size
+					- Stride - downsamples image. instead of moving window across all pixels, use stride (ex: stride=2) to move window faster and look at a downsampled grid
+					- Dilation - increases receptive field
+						- ![[Pasted image 20230318192707.png]]
+						- ![[Pasted image 20230318192721.png]]
+				- Pooling layer - make feature maps or representations smaller so that neurons in next layer can see a larger region of image. (similar to downsampling)
+				- Example of CNN:
+					- LeNet-5: 7 layers excluding input layer
+						- C: convolution layer
+						- S: pooling layer
+						- F: fully connected![[Pasted image 20230318205436.png]]
+						- convolution layer maths same as MLP
+						- performance comparable to SVM
+			- Deep Neural Netwroks
+				- problems in optimisation: exploding gradient (gradient becomes very large, preventing converging), vanishing gradient (gradient becomes vanishingly small, preventing weights from changing their values)
+				- if too large, do clipping![[Pasted image 20230318210319.png]]
+				- if vanishing, it may be because f(z) - sigmoid function - saturated at 0 and 1, which makes f'(z) almost 0. then gradient cannot be backpropogated. Hence we use ReLU - gradient becomes 0 when z becomes -ve, but does not vanish when z is very large.![[Pasted image 20230318213304.png]]
+				- ![[Pasted image 20230318213334.png]]
+				- Example: AlexNet - substantial improvement to ImageNet classification challenge
+					- ![[Pasted image 20230318213643.png]]
+					- ![[Pasted image 20230318213709.png]]
+			- VGG - Visual Geometry Group
+				- uses only convolution of 3 3x3 kernels to get 7x7 convolutional kernel. increases depth of network and non-linearity
+				- outperforms AlexNet due to deeper architecture
+			- ResNet
+				- adds shortcut connections to enable flow of gradients after stacking more convolutional layers because training is based on error backprop and it is difficult for error to propogate to layers far away from output and update weights there
+				- If weights in the residual unit are zero, it is a identity mapping.
+				- If we form a deep network by stacking some residual units onto a shallow network, at least it will perform as well as the shallow network, as the residual units can be identity mappings.
+				- ![[Pasted image 20230318214305.png]]
 			- Loss function:
 				- Mean squared error:![[Pasted image 20230314234943.png]]
 				- works for regression problems but may not work for image classification where y is categorical (as opposed to continuous variable). 
@@ -280,5 +316,190 @@
 				- MLP uses many parameters. May not scale up to bigger images. This is because a 2D image is considered a flattened vector without considering its 2D nature.
 				- Forward propogation:![[Pasted image 20230315002516.png]]
 				- gradient descent to minimise loss function J(W,b)![[Pasted image 20230315004109.png]]
-				- gradient 
-		- vision transformer
+				- calculate $\frac {\delta J} {\delta W}$ and $\frac {\delta J} {\delta b}$ using backprop algo:
+					- ![[Pasted image 20230318212849.png]]
+		- Vision Transformer
+			- transformer consists of multi-head self-attention (MSA) layers.
+			- self attention - a way to model the dependecies bw tokens
+			- ![[Pasted image 20230318215138.png]]
+			- ![[Pasted image 20230318215200.png]]
+			- ![[Pasted image 20230318215226.png]]
+			- ![[Pasted image 20230318215248.png]]
+			- ![[Pasted image 20230318215420.png]]
+		- ConvNeXt
+			- carefully engineer key components of ConvNet (Convolution kernel size, no. of feature channels, activation func, normalisation layer etc.) to supercede transformers
+
+
+
+
+7. Image Segmentation
+	- Unsupervised Methods
+		- Thresholding
+			- simplest method
+			- converts grayscale image into a binary label map
+			- f(x) = 1 if I(x) >= threshold or 0 otherwise
+			- only 1 parameter - threshold. no training data
+		- K-means clustering
+			- params: each cluster is represented by its centre
+			- association: each data point (pixel intensity) is assigned to nearest cluster center
+			- optimal cluster center is that wish minimises the intra-class variance:![[Pasted image 20230318220705.png]]
+			- two unknowns: delta_x,k and cluster center mew_k
+			- ![[Pasted image 20230318220821.png]]
+			- ![[Pasted image 20230318220956.png]]
+		- Gaussian Mixture Model
+			- in K-means, delta_x,k is either 0 or 1.
+			- GMM performs a soft assignment by assuming gaussian distribution for each cluster.![[Pasted image 20230318221137.png]]
+			- ![[Pasted image 20230318221214.png]]
+			- ![[Pasted image 20230318221300.png]]
+			- background removal function is Powerpoint uses GrabCut algo:
+				- estimate GMM parameters for 2 clusters (foreground, background)
+				- perform segmentation with smoothness constraint and user edit constraint (using GraphCut)
+		- unsupervised methods - no training data needed, easy to implement and fast
+	- Supervised Methods
+		- needs training data
+		- better accuracy than unsupervised methods
+		- Convolutional Neural Network
+			- sematic segmentation is pixel-wise classification.
+			- apply the classification model to every pixel of image, but this is expensive because the output is a probability vector for an image.
+			- instead we develop network that outputs a pixel-wise probability map instead of single probability vector
+			- after last convolutional layer of AlexNet - 13x13 feature map is downsampled from 224x224 input image. each pixel in feature map encodes info of a 16x16 region of input image. 
+			- we remove the fully connected layers and directly infer pixel-wise classification results from feature map
+		- Fully convolutional network
+			- all layers are convolutional (no fully connected)
+			- after downsampling the original image to pixel-wise probability map, we upsample it to original image size
+			- downsampling: strided convolution, pooling
+			- upsampling: transposed convolution
+			- ![[Pasted image 20230318224336.png]]
+			- Training segmentation network: 
+				- at each pixel, define classification loss (eg: cross entropy)
+				- segmentation loss is average classification loss for all pixels
+				- network can be trained by optimising segmentation loss
+	- To accurately delineate the boundary of an object, we need both - Local feature (pixel intensities, edges etc), Global feature (what object this is, what it is next to, context) 
+	- The first few layers of a neural network extract local features. Deep layers encode global features.
+	- Networks that integrate multi-scale features:
+		- DeepLabv3+
+			- image pyramid - in spatial pyramid pooling, features are extracted at multiple scales to get an aggregated feature map
+			- to extract features at multiple scales: convolutional kernels w different sizes, convolutional kernels with different dilations etc.
+			- skip connection at one level
+		- U-net
+			- skip connections at every level
+			- conv 3x3, ReLU
+			- copy and crop
+			- max pool 2x2
+			- up-conv 2x2
+			- conv 1x1
+		- HRNet - There are four resolution levels of features. High-resolution (local) features contribute to the learning of low-resolution (global) features. And vice versa. 
+		- UNet++ - Features of multiple scales are fused multiple times.
+		- UNETR - A hybrid U-net + Transformer architecture can be developed, which aggregates local features learnt by convolutions and global features learnt by transformer.
+		- Semantic segmentation assigns a class to each pixel but does not care if these pixels form a single object (instance).
+		- instance segmentation defines segmentation for each instance
+		- Panoptic segmentation - focuses on countable things (eg: human dog etc). uncountable stuff (sky, road) ignored. this aims to unify things and stuff, providing segmentation for each thing (instance) and also segmentation for stuff.
+
+
+
+
+8. Object Detection
+	- goal: predict a set of bouding boxes and labels for each object of interest
+	- apply the image classification model to different regions of an image for detection
+	- at each location, perform 2 tasks:
+		- task 1: classification (is it a cat or not?)
+		- task 2: localisation (predict bounding box coordinates)
+		- use CNN to refine the localisation
+	- 2 stage detection:
+		- stage 1: Region proposal
+			- initial guess, propose some possible regions of interest
+			- R-CNN - selective search
+			- Fast R-CNN - Selective search
+			- Faster R-CNN - CNN
+		- stage 2: Detector
+			- perform classification and localisation for these regions
+			- R-CNN - SVM for classification, linear regression for localization
+			- Fast R-CNN - CNN
+			- Faster R-CNN - CNN
+	- Faster R-CNN for two-stage object detection:
+		- Stage 1 - A region proposal network is applied to the convolutional feature map to propose possible regions of interest.
+			- For VGG net, there are 4 max pooling layers before conv5
+			- Hence first two dimensions of feature map is X/16 x Y/16
+			- If the input image is 224 x 224, then conv5 feature map is 14 x 14 x D. 
+			- D is the depth dimension or the number of filters. For conv5 in VGG net, D = 512.
+			- Each pixel of the feature map is a high-dimensional feature vector, which describes the content of a small region in the input image. This feature vector may tell us whether this is an interesting region or not.
+			- To proposing regions, we go across the convolutional feature map using a 3x3 sliding window. Using features at this window, we perform a binary classification. (0: not interesting, 1: interesting). Also, we want to predict the size of this object of interest
+			- At each sliding window, the network makes k predictions, for objects of different scales and aspect ratios. 
+				- 3 scales: 128^2, 256^2, 512^2 
+				- 3 aspect ratios: 1:1, 1:2, 2:1 
+				- In total, k = 3 x 3 = 9 
+				- These bounding boxes are called “anchors”. • Each predictor is trained to tell objects of a specific scale and aspect ratio.
+			- ![[Pasted image 20230319003655.png]]
+			- Bounding box can be dexcribed by its centre (x, y) and size (w, h)
+			- ![[Pasted image 20230319003831.png]]
+		- Stage 2 - Detection network
+			- We know the regions of interest (ROI). Now we perform classification for the region
+			- ROI pooling - each ROI may have different sizes, we normalize size using ROI pooling layer, mapping features within ROI into a standard fixed size. Mapped features are provided to classifier.
+			- Multi-class classifier:![[Pasted image 20230319004227.png]]
+	- Instead of Faster R-CNN, we can do everything in one stage (example: YOLO, SSD - single shot multibox detector)
+	- In faster RCNN, the loss for RPN is a binary classifier. Instead we change it to a multi-class classifier. For each anchor, directly predict what object it is.
+	- Faster R-CNN is slower but more accurate than SSD
+
+
+
+
+9. Motion
+	- Optic flow - The motion (flow) of brightness patterns (optics) in videos
+	- output of optic flow - flow field that describes the displacement vector for each pixel in the image
+	- Video is a function of space (x, y) and time t. For each point (x, y) at time t, we would like to estimate its corresponding position (x + u, y + v) at time t + 1.
+	- Assumptions in optics flow - brightness constancy (a pixel has constant brightness across time), small motion bw frames, spatial coherence (pixels move like their neighbours)
+	- ![[Pasted image 20230319005359.png]]
+	- ![[Pasted image 20230319201038.png]]
+	- Above, there are 2 unknowns: u and v. So the Lucas-Kanade method introduces spatial coherence assumption.: flow is constant within a small neighbourhood. we need 2 equations to solve the system since there are 2 unknowns.
+	- I_x = (I(x+1, y, t) - I(x, y, t)) /2
+	- I_y = (I(x, y+1, t) - I(x, y, t)) /2
+	- I_t = I(x, y, t+1) - I(x, y, t)
+	- ![[Pasted image 20230319201836.png]]
+	- condition number for matrix ($\transpose{A} * A$) = |lamda_max| / |lamda_min|
+	- flat regions and edges have lamda_min close to 0, so have a large condition no. and inverse of trans(A)*A becomes numerically sensitive to small perturbations/changes
+	- At corners, since lamda_min is larger, condition no. is smaller so the inverse is numerically more stable and flow estimation is more robust
+	- in lucas kanade method, the aim is to calculate optic flow for a pixel x = [u, v]trans as defined in above equation
+	- Approximating large motion:
+		- downsample the image so that displacement of 8 pixels at scale 1 (original) is only 1 pixel at scale 4 (downsampled by factor of 8)
+		- estimate flow in coarse resolution (i.e. downsampled img) then increment flow to scale back up and estimate at original resolution to get warped image
+		- ![[Pasted image 20230319204327.png]]
+	- ![[Pasted image 20230319204424.png]]
+	- Object Tracking Methods
+		- Lucas-Kanade tracker
+			- basic assuptions: constant brightness, small motion
+			- we get the same equation for [u, v] as above
+			- Lucas-Kanade optic flow calculates matrix by summing over a small neighbourhood. 
+			- Lucas-Kanade tracker calculates matrix by summing over pixels within the template image.
+			- Limitations: The brightness constancy assumption may not always hold. Lucas-Kanade only uses pixel intensities. It does not learn discriminative features for the template.
+		- Correlation filter method
+			- ![[Pasted image 20230319213742.png]]
+			- a recent approach uses Siamese network to learn and compare features. The network parameters are trained to predict a ground truth score map.
+	- Another application involving videos and motion: action recognition. We use both image and motion information. Image: static features extracted from a single image. Motion: dynamic features extracted from videos, e.g. optic flow fields. We can combine both to train a classifier for action recognition.
+
+
+10. Camera Model
+	- Map 3D coordinates to 2D coordinates: $x = PX$ where x = (x, y) is 2D, P is camera matrix, X = (X, Y, Z) is 3D
+	- f is focal length, Z is distance bw object and camera origin Z. Y is object height, fY/Z is image height.
+	- Hence (X, Y, Z) maps to (fX/Z, fY/Z).
+	- then using homogeneous coordinate, (X, Y, Z, 1) maps to (fX/Z, fY/Z, 1) = (fX, fY, Z) by mutliplying Z (since it is homogeneous)
+	- ![[Pasted image 20230319221110.png]]
+	- image origin may be different from principal point p.
+	- ![[Pasted image 20230319221823.png]]
+	- ![[Pasted image 20230319221850.png]]
+	- The camera coordinate system is related to world coordinate system by 3D rotation and translation
+	- X_cam = R(X - C) where C is translation and R is rotation where X_cam and X are inhomogenous coordinates. X = transpos([X, Y, Z])
+	- using homogenous coordinates X = transpos([X, Y, Z, 1]):![[Pasted image 20230319222859.png]]
+	- mapping world coordinate to camera coordinate, then to image coordinate:![[Pasted image 20230319222943.png]]
+	- ![[Pasted image 20230319223027.png]]
+	- P has 9 degrees of freedom: intrinsic params have 3 DoF (f, p_x, p_y), extrinsic params have 6 DoF (3 for 3D rotation R, 3 for 3D translation C)
+	- on camera sensors, distance is converted to pixels:![[Pasted image 20230319223258.png]]
+	- Then, also adding skew s for more generality:![[Pasted image 20230319223442.png]]
+	- Then, P has 11 DoF, adding 1 for skew (i.e. x and y axes are not orthogonal), and 1 for noting that a_x may not be equal to a_y.
+	- Estimating camera matrix P is known as camera calibration or pose estimation. Assume 3D structure (worl coordinates X of some structures) are known. ![[Pasted image 20230319223723.png]]
+	- ![[Pasted image 20230319224049.png]] where p_1 = vector[p_1, p_2, p_3, p_4], p_2 = vector[p_5, p_6, p_7, p_8], p3 = vector[p_9, p_10, p_11, p_12]
+	- The above equation system is of the form Ap = 0 where solution p is null space of matrix A.
+	- ![[Pasted image 20230319224941.png]]
+	- ![[Pasted image 20230319225029.png]]
+	- ![[Pasted image 20230319225052.png]]
+	- To get points {X_i, x_i}: place reference object in the scene. identify correspondences between points in the image and scene. compute mapping from scene to image.
+	- multiple view geometry: when we move camera and take images from diff perspectives, multiple view geometry is involved.

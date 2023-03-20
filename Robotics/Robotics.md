@@ -189,4 +189,10 @@
 
 
 6. Simultaneous Localisation and Mapping (SLAM)
+	- build a map incrementally and localise with respect to the map as it grows and refines
+	- assumption: the world is static, only the robot moves
+	- robot starts at 0 uncertainty. first measures closest object/obstacle. as it moves forward, uncertainty grows. when it measures/detects another obstacle, that obstacle inherits the robot's uncertainty + a little more. returning back to beginning, even more uncertainty, but measuring the first object again, uncertainty shrinks. if robot remeasures second object, then any other objects that were measured at the same time as that object also get lower certainty
+	- ![[Pasted image 20230317225005.png]]
+	- with a single camera: Every time a feature point is detected in an image, it provides a measurement of the angular direction of the feature relative to the camera.
+	- Purely metric probabilistic SLAM is limited to small domains due to: • Poor computational scaling of probabilistic filters. • Growth in uncertainty at large distances from map origin makes representation of uncertainty inaccurate. • Data Association (matching features) gets hard at high uncertainty
 	- 

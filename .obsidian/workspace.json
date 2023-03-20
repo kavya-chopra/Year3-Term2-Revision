@@ -13,13 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
+                "file": "Computer Vision/Computer Vision.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "229c065f14a4c6c5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
                 "file": "Robotics/Robotics.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -147,21 +160,20 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "14b627fb6d5ee6db",
+  "active": "229c065f14a4c6c5",
   "lastOpenFiles": [
-    "Pasted image 20230316221255.png",
-    "Pasted image 20230316220955.png",
-    "Pasted image 20230316220949.png",
-    "Pasted image 20230316220913.png",
-    "Pasted image 20230316220805.png",
-    "Pasted image 20230316214952.png",
-    "Pasted image 20230316213426.png",
-    "Pasted image 20230316213232.png",
-    "Pasted image 20230316213205.png",
-    "Pasted image 20230316213104.png",
-    "Pasted image 20230316212822.png",
     "Computer Vision/Computer Vision.md",
     "Robotics/Robotics.md",
+    "Pasted image 20230319225052.png",
+    "Pasted image 20230319225029.png",
+    "Pasted image 20230319224941.png",
+    "Pasted image 20230319224049.png",
+    "Pasted image 20230319223723.png",
+    "Pasted image 20230319223442.png",
+    "Pasted image 20230319223258.png",
+    "Pasted image 20230319223027.png",
+    "Pasted image 20230319222943.png",
+    "Pasted image 20230319222859.png",
     "Robotics",
     "Computer Vision"
   ]
